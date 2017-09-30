@@ -134,8 +134,20 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
          * @uses add_filter
          */
         public function init() {
+            add_action( 'admin_head', array( $this, 'admin_head' ) );
             add_action( 'woocommerce_product_options_general_product_data', array( $this, 'add_general_panel_fields' ) );
             add_action( 'woocommerce_process_product_meta', array( $this, 'save_product_meta' ) );
+        }
+
+        public function admin_head() {
+            echo <<<HTML
+<style type="text/css">
+#odwpwcchp-child_price_custom {
+    float: none;
+    width: 78px !important;
+}
+</style>
+HTML;
         }
 
         /**

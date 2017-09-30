@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Dětská sleva
+ * Plugin Name: Dětské slevy
  * Plugin URI: https://github.com/ondrejd/odwp-wc-child_price
  * Description: Přidá pro <strong>WooCommerce</strong> produkty ještě jednu cenu s možností slevy pro děti.
  * Version: 1.0.0
@@ -35,6 +35,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
          * @internal Activates the plugin.
          * @return void
          * @since 1.0.0
+         * @static
          */
         public static function activate() {
             //...
@@ -44,6 +45,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
          * @internal Deactivates the plugin.
          * @return void
          * @since 1.0.0
+         * @static
          */
         public static function deactivate() {
             //...
@@ -54,6 +56,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
          * @link https://developer.wordpress.org/reference/functions/deactivate_plugins/
          * @return void
          * @since 1.0.0
+         * @static
          * @uses get_option
          * @uses update_option
          */
@@ -84,6 +87,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
          * @link https://developer.wordpress.org/reference/functions/is_plugin_active_for_network/#source-code
          * @return boolean Returns `true` if requirements are met.
          * @since 1.0.0
+         * @static
          * @uses get_option
          */
         public static function requirements_check() {
@@ -101,6 +105,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
          * @internal  Shows error in WP administration that minimum requirements were not met.
          * @return void
          * @since 1.0.0
+         * @static
          */
         public static function requirements_error() {
 ?>
@@ -108,6 +113,19 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
     <p><?php _e( 'Plugin <b>Uživatelské hodnoty #1</b> vyžadují, aby byl nainstalován a aktivován plugin <b>WooCommerce</b> &ndash; plugin byl deaktivován.', 'odwp-wc-krx_child_price' ) ?></p>
 </div>
 <?php
+        }
+
+        /**
+         * @internal Retrieves percentage discount.
+         * @return int
+         * @since 1.0.0
+         * @static
+         * @uses apply_filters
+         * @uses get_option
+         */
+        public static function get_percentage_discount() {
+            $key = 'child_price_percentage_discount';
+			return ( int ) apply_filters( 'wc_option_' . $key, get_option( 'wc_settings_' . $key ) );
         }
 
         /**
@@ -137,6 +155,8 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
             add_action( 'admin_head', array( $this, 'admin_head' ) );
             add_action( 'woocommerce_product_options_general_product_data', array( $this, 'add_general_panel_fields' ) );
             add_action( 'woocommerce_process_product_meta', array( $this, 'save_product_meta' ) );
+            add_filter( 'woocommerce_get_sections_products', array( $this, 'add_section' ), 98 );
+            add_filter( 'woocommerce_get_settings_products', array( $this, 'add_section_settings' ), 10, 2 );
         }
 
         public function admin_head() {
@@ -165,6 +185,8 @@ HTML;
 
             $child_price = get_post_meta( $post->ID, '_child_price', true );
             $child_price_custom = get_post_meta( $post->ID, '_child_price_custom', true );
+            $percentage_discount = self::get_percentage_discount();
+
 
             if( empty( $child_price ) ) {
                 $child_price = 'none';
@@ -179,7 +201,11 @@ HTML;
         </span><br>
         <span class="wrap">
             <input type="radio" id="odwpwcchp-child_price2" name="_child_price" value="fixed" <?php echo checked( 'fixed', $child_price ) ?>>
-            <?php _e( 'Paušální dětská sleva (viz. <a href="#">Nastavení</a>)', 'odwp-wc-krx_child_price' ) ?>
+            <?php printf(
+                __( 'Paušální dětská sleva (<strong>%1$d %%</strong>, viz. <a href="%2$s">Nastavení</a>)', 'odwp-wc-krx_child_price' ),
+                $percentage_discount,
+                admin_url( 'admin.php?page=wc-settings&tab=products&section=child_price' )
+            ) ?>
         </span><br>
         <span class="wrap">
             <input type="radio" id="odwpwcchp-child_price3" name="_child_price" value="custom" <?php echo checked( 'custom', $child_price ) ?>>
@@ -215,6 +241,54 @@ HTML;
                 update_post_meta( $post_id, $name, $value );
             }
         }
+
+        /**
+         * @internal Adds section into Products tab of WooCommerce settings page.
+         * @param array $sections
+         * @return array
+         * @since 1.0.0
+         */
+        public function add_section( $sections ) {
+            $sections['child_price'] = __( 'Dětské slevy', 'odwp-wc-krx_child_price' );
+            return $sections;
+        }
+
+        /**
+         * @internal Adds settings for our section of Products tab of WooCommerce settings page.
+         * @param array $settings
+         * @param string $current_section
+         * @return array
+         * @since 1.0.0
+         */
+        public function add_section_settings( $settings, $current_section ) {
+            if( $current_section != 'child_price' ) {
+                return $settings;
+            }
+
+            $section_settings = array();
+            // Title and main description
+        	$section_settings[] = array(
+                'name' => __( 'Dětské slevy', 'odwp-wc-krx_child_price' ),
+                'type' => 'title',
+                'desc' => __( 'Následující volby jsou určeny pro rozšíření <strong>Dětské slevy</strong>', 'odwp-wc-krx_child_price' ),
+                'id' => 'child_price'
+            );
+            // Percentage discount
+        	$section_settings[] = array(
+        		'name'     => __( 'Procentní sleva', 'odwp-wc-krx_child_price' ),
+        		'desc_tip' => __( 'Procentní sleva, která bude použita pro výpočet dětských cen.', 'odwp-wc-krx_child_price' ),
+        		'id'       => 'wc_settings_child_price_percentage_discount',
+        		'type'     => 'text',
+        		'desc'     => __( 'Zadejte celé číslo - např. 25.', 'odwp-wc-krx_child_price' ),
+                'class'    => 'short',
+        	);
+        	// End of section
+        	$section_settings[] = array(
+                'type' => 'sectionend',
+                'id' => 'child_price'
+            );
+        	return $section_settings;
+        }
     }
 endif;
 
@@ -224,7 +298,7 @@ if( ! ODWP_WC_Krx_Child_Price::requirements_check() )
     ODWP_WC_Krx_Child_Price::deactivate_raw();
 
     if( is_admin() ) {
-        add_action( 'admin_head', ['ODWP_WC_Krx_Child_Price', 'requirements_error'] );
+        add_action( 'admin_head', array( 'ODWP_WC_Krx_Child_Price', 'requirements_error' ) );
     }
 
     exit();

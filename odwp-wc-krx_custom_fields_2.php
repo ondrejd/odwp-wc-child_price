@@ -218,7 +218,7 @@ if( ! ODWP_WC_Krx_Custom_Fields_2::requirements_check() )
     ODWP_WC_Krx_Custom_Fields_2::deactivate_raw();
 
     if( is_admin() ) {
-        add_action( 'admin_head', ['ODWP_WC_Krx_Custom_Fields_2', 'requirements_error'] );
+        add_action( 'admin_head', array( 'ODWP_WC_Krx_Custom_Fields_2', 'requirements_error' ) );
     }
 
     exit();

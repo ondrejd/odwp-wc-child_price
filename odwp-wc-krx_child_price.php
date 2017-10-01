@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Dětské slevy
- * Plugin URI: https://github.com/ondrejd/odwp-wc-child_price
+ * Plugin URI: https://github.com/ondrejd/simple-woocommerce-plugins
  * Description: Přidá pro <strong>WooCommerce</strong> produkty ještě jednu cenu s možností slevy pro děti.
  * Version: 1.0.0
  * Author: Ondřej Doněk
@@ -110,7 +110,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
         public static function requirements_error() {
 ?>
 <div id="odwpwckcf1_message" class="error notice is-dismissible">
-    <p><?php _e( 'Plugin <b>Uživatelské hodnoty #1</b> vyžadují, aby byl nainstalován a aktivován plugin <b>WooCommerce</b> &ndash; plugin byl deaktivován.', 'odwp-wc-krx_child_price' ) ?></p>
+    <p><?php _e( 'Plugin <b>Uživatelské hodnoty #1</b> vyžaduje, aby byl nainstalován a aktivován plugin <b>WooCommerce</b> &ndash; plugin byl deaktivován.', 'odwp-wc-krx_child_price' ) ?></p>
 </div>
 <?php
         }
@@ -167,6 +167,12 @@ if( ! class_exists( 'ODWP_WC_Krx_Child_Price' ) ) :
     width: 78px !important;
 }
 </style>
+<script type="text/javascript">
+jQuery( document ).ready( function() {
+    var val = jQuery( "input[name=_child_price]" ).val();
+    jQuery( "input[value=custom]" ).prop( "disabled", ( val != "custom" ) );
+} );
+</script>
 HTML;
         }
 
@@ -186,7 +192,6 @@ HTML;
             $child_price = get_post_meta( $post->ID, '_child_price', true );
             $child_price_custom = get_post_meta( $post->ID, '_child_price_custom', true );
             $percentage_discount = self::get_percentage_discount();
-
 
             if( empty( $child_price ) ) {
                 $child_price = 'none';
@@ -279,7 +284,7 @@ HTML;
         		'desc_tip' => __( 'Procentní sleva, která bude použita pro výpočet dětských cen.', 'odwp-wc-krx_child_price' ),
         		'id'       => 'wc_settings_child_price_percentage_discount',
         		'type'     => 'text',
-        		'desc'     => __( 'Zadejte celé číslo - např. 25.', 'odwp-wc-krx_child_price' ),
+        		'desc'     => __( 'Zadejte celé číslo - např. <strong>25</strong> %.', 'odwp-wc-krx_child_price' ),
                 'class'    => 'short',
         	);
         	// End of section

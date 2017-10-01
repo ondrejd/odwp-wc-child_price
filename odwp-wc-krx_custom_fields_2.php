@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Uživatelská pole #2
- * Plugin URI: https://github.com/ondrejd/odwp-wc-child_price
+ * Plugin URI: https://github.com/ondrejd/simple-woocommerce-plugins
  * Description: Přidá uživatelská pole jako <em>důležité informace</em>, <em>místo setkání</em> atp. pro <strong>WooCommerce</strong> produkty.
  * Version: 1.0.0
  * Author: Ondřej Doněk
@@ -105,7 +105,7 @@ if( ! class_exists( 'ODWP_WC_Krx_Custom_Fields_2' ) ) :
         public static function requirements_error() {
 ?>
 <div id="odwpwckcf2_message" class="error notice is-dismissible">
-    <p><?php _e( 'Plugin <b>Uživatelské hodnoty #2</b> vyžadují, aby byl nainstalován a aktivován plugin <b>WooCommerce</b> &ndash; plugin byl deaktivován.', 'odwp-wc-krx_custom_fields_2' ) ?></p>
+    <p><?php _e( 'Plugin <b>Uživatelské hodnoty #2</b> vyžaduje, aby byl nainstalován a aktivován plugin <b>WooCommerce</b> &ndash; plugin byl deaktivován.', 'odwp-wc-krx_custom_fields_2' ) ?></p>
 </div>
 <?php
         }

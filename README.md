@@ -2,7 +2,7 @@
 This repository contains some small [WordPress][1]+[WooCommerce][2] plugins of mine. Each plugin consits from just one _PHP_ source file.
 
 ## Plugins list
-Plugins self are located in `plugins` directory but can be also downloaded on [plugin's Releases page][3].
+Plugins self are located in [plugins][4] folder but can be also downloaded on [Releases page][3].
 + `odwp-wc-krx_child_price.php` - adds new child price ([screenshots](#child-price-plugin)),
 + `odwp-wc-krx_custom_fields_1.php` - adds new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-1)),
 + `odwp-wc-krx_custom_fields_2.php` - adds new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-2)).
@@ -34,3 +34,4 @@ Adds custom settings:
 [1]:https://wordpress.org/
 [2]:https://woocommerce.net/
 [3]:https://github.com/ondrejd/small-woocommerce-plugins/releases
+[4]:https://github.com/ondrejd/small-woocommerce-plugins/tree/master/plugins

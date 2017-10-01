@@ -9,8 +9,18 @@
  * @license https://www.gnu.org/licenses/gpl-3.0.en.html GNU General Public License 3.0
  * @package odwp-wc-small_plugins
  * @todo Enable script parameters in order to build just specified plugin instead of all!
+ * @todo Enable clear parameter.
+ * @todo Enable verbose parameter.
+ * @todo Check if php-zip extension is enabled.
  * @version 1.0.0
  */
+
+if( ! class_exists( 'ZipArchive' ) ) {
+    print(
+        'This script needs Zip extension installed!' . PHP_EOL .
+        'See http://php.net/manual/en/book.zip.php for more details.' . PHP_EOL
+    );
+}
 
 if( ! class_exists( 'ODWP_WC_Plugins_Builder' ) ) :
     /**
@@ -19,6 +29,7 @@ if( ! class_exists( 'ODWP_WC_Plugins_Builder' ) ) :
      * @since 1.0.0
      */
     class ODWP_WC_Plugins_Builder {
+
         /**
          * @var array $plugins
          * @since 1.0.0
@@ -44,7 +55,10 @@ if( ! class_exists( 'ODWP_WC_Plugins_Builder' ) ) :
             $errors = [];
 
             foreach( $this->plugins as $plugin => $version ) {
-                print( 'Building plugin "' . $plugin . '".' . PHP_EOL );
+                $err = $this->build_plugin( $plugin );
+                if( ! empty( $err ) ) {
+                    $errors[] = $err;
+                }
             }
 
             return $errors;
@@ -53,19 +67,57 @@ if( ! class_exists( 'ODWP_WC_Plugins_Builder' ) ) :
         /**
          * Builds specified plugin.
          * @param string $plugin Name of the plugin
-         * @return array Array with errors.
+         * @return string An error.
          * @since 1.0.0
          */
         public function build_plugin( $plugin ) {
-            $errors = [];
-
             if( empty( $plugin ) ) {
-                $errors[] = 'Name of the plugin was not specified!';
-                return $errors;
+                return 'Name of the plugin was not specified!';
             }
 
-            //...
-            return $errors;
+            if( ! array_key_exists( $plugin, $this->plugins ) ) {
+                return 'Wrong name "' . $plugin . '" of the plugin was specified!';
+            }
+
+            $basepath = dirname( dirname( __FILE__ ) );
+            $version  = $this->plugins[$plugin];
+            $phpfile  = "{$basepath}/plugins/{$plugin}.php";
+            $zipfile  = "{$basepath}/bin/{$plugin}-{$version}.zip";
+
+            if( empty( $version ) ) {
+                $version = '0.0.1';
+            }
+
+            if( ! file_exists( $phpfile ) ) {
+                return 'Source PHP file "' . $phpfile . '" does not exists!';
+            }
+
+            if( $this->create_zip( $plugin, $phpfile, $zipfile ) !== true ) {
+                return 'Can not create ZIP archive "' . $zipfile . '"!';
+            }
+
+            return '';
+        }
+
+        /**
+         * @internal Creates ZIP package.
+         * @param string $plugin
+         * @param string $phpfile
+         * @param string $zipfile
+         * @return boolean
+         * @since 1.0.0
+         */
+        protected function create_zip( $plugin, $phpfile, $zipfile ) {
+            $zip = new ZipArchive();
+
+            if( $zip->open( $zipfile, ZipArchive::CREATE ) !== true ) {
+                return false;
+            }
+
+            $zip->addFile( $phpfile );
+            $zip->close();
+
+            return true;
         }
     }
 endif;
@@ -82,6 +134,14 @@ $builder = new ODWP_WC_Plugins_Builder( [
 ] );
 
 // Build plugins and print errors
-foreach( $builder->build_all() as $err ) {
-    print( $err . PHP_EOL );
+/**
+ * @var array $errors
+ */
+$errors = $builder->build_all();
+if( count( $errors ) > 0 ) {
+    foreach( $errors as $err ) {
+        print( $err . PHP_EOL );
+    }
+} else {
+    print( 'No errors...' . PHP_EOL );
 }

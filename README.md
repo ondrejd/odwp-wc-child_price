@@ -3,14 +3,15 @@ This repository contains some small [WordPress][1]+[WooCommerce][2] plugins of m
 
 ## Plugins list
 + `odwp-wc-krx_child_price.php` - adds new child price ([screenshots](#child-price-plugin)),
-+ `odwp-wc-krx_custom_fields_1.php` - add new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-1)),
-+ `odwp-wc-krx_custom_fields_2.php` - add new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-2)).
++ `odwp-wc-krx_custom_fields_1.php` - adds new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-1)),
++ `odwp-wc-krx_custom_fields_2.php` - adds new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-2)).
++ `odwp-wc-krx_trip_duration.php` - adds possibility to define trip duration using new custom fields of [WooCommerce][2] products ([screenshots](#trip-duration)).
 
 ## Screenshots
 They are describing functionality of each plugin.
 
 ### Child Price Plugin
-Adds options for child discount price:
+Adds custom fields into product's edit page:
 [![Edit product page](screenshot-01.png)](screenshot-01.png)
 Adds custom settings:
 [![WooCommerce settings page](screenshot-04.png)](screenshot-04.png)
@@ -22,6 +23,12 @@ Adds section with set of custom fields:
 ### Custom user fields 2
 Adds section with set of custom fields:
 [![Edit product page](screenshot-03.png)](screenshot-03.png)
+
+### Trip duration
+Adds custom fields into product's edit page:
+[![Edit product page](screenshot-05.png)](screenshot-05.png)
+Adds custom settings:
+[![WooCommerce settings page](screenshot-06.png)](screenshot-06.png)
 
 [1]:https://wordpress.org/
 [2]:https://woocommerce.net/

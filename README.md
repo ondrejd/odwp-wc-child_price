@@ -1,12 +1,25 @@
 # Small WooCommerce Plugins
-This repository contains some small [WordPress][1]+[WooCommerce][2] plugins of mine. Each plugin consits from just one _PHP_ source file.
+This repository contains some small [WordPress][1]+[WooCommerce][2] plugins of mine. You
 
-## Plugins list
-Plugins self are located in [plugins][4] folder but can be also downloaded on [Releases page][3].
-+ `odwp-wc-krx_child_price.php` - adds new child price for _WC_ products  ([screenshots](#child-price-plugin)),
-+ `odwp-wc-krx_custom_fields_1.php` - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-1)),
-+ `odwp-wc-krx_custom_fields_2.php` - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-2)).
-+ `odwp-wc-krx_trip_duration.php` - adds possibility to define trip duration using new custom fields for _WC_ products ([screenshots](#trip-duration)).
+## Included plugins
+Here is a table with all included plugins:
+
+| Plugin | Version | WP_min_ | WP_max_ | WC_min_ | WC_min_ |
+|--------|---------|--------:|--------:|--------:|--------:|
+| __Child Price__ - adds new child price for _WC_ products  ([screenshots](#child-price-plugin)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
+| __Custom User Fields 1__ - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-1)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
+| __Custom User Fields 2__ - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-2)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
+| __Trip Duration__ - adds possibility to define trip duration using new custom fields for _WC_ products ([screenshots](#trip-duration)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
+
+__Note:__ __WP_min___ is [WordPress][1] minimal version on which was plugin tested on, __WP_max___ accordingly maximal tested version; __WC_min___, __WC_max___ stands for maximal/minimal tested version of [WooCommerce][2] plugin.
+
+## For users/developers
+Here are some notes for users/developers:
++ all plugins can be downloaded on [Releases page][3] (in separate _ZIP_ files),
++ all plugins consist just from one _PHP_ source file located in [plugins][4] folder of this repository,
++ all plugins are translatable but __not translated__ and are mostly in Czech language,
++ you can build yourself distribution _ZIP_ package using `bin/build.php` script (configured to be executable as Linux shell script),
++ __if you need anything don't hesitate to contact the author of the plugins__.
 
 ## Screenshots
 These screenshots fully describing functionality of each plugin.

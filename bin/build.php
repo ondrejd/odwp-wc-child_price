@@ -114,7 +114,7 @@ if( ! class_exists( 'ODWP_WC_Plugins_Builder' ) ) :
                 return false;
             }
 
-            $zip->addFile( $phpfile );
+            $zip->addFile( $phpfile, "/{$plugin}.php" );
             $zip->close();
 
             return true;

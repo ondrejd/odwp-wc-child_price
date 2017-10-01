@@ -2,6 +2,7 @@
 This repository contains some small [WordPress][1]+[WooCommerce][2] plugins of mine. Each plugin consits from just one _PHP_ source file.
 
 ## Plugins list
+Plugins self are located in `plugins` directory but can be also downloaded on [plugin's Releases page][3].
 + `odwp-wc-krx_child_price.php` - adds new child price ([screenshots](#child-price-plugin)),
 + `odwp-wc-krx_custom_fields_1.php` - adds new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-1)),
 + `odwp-wc-krx_custom_fields_2.php` - adds new set of custom fields of [WooCommerce][2] products ([screenshot](#custom-user-fields-2)).
@@ -12,23 +13,24 @@ They are describing functionality of each plugin.
 
 ### Child Price Plugin
 Adds custom fields into product's edit page:
-[![Edit product page](screenshot-01.png)](screenshot-01.png)
+[![Edit product page](images/screenshot-01.png)](images/screenshot-01.png)
 Adds custom settings:
-[![WooCommerce settings page](screenshot-04.png)](screenshot-04.png)
+[![WooCommerce settings page](images/screenshot-04.png)](images/screenshot-04.png)
 
 ### Custom user fields 1
 Adds section with set of custom fields:
-[![Edit product page](screenshot-02.png)](screenshot-02.png)
+[![Edit product page](images/screenshot-02.png)](images/screenshot-02.png)
 
 ### Custom user fields 2
 Adds section with set of custom fields:
-[![Edit product page](screenshot-03.png)](screenshot-03.png)
+[![Edit product page](images/screenshot-03.png)](images/screenshot-03.png)
 
 ### Trip duration
 Adds custom fields into product's edit page:
-[![Edit product page](screenshot-05.png)](screenshot-05.png)
+[![Edit product page](images/screenshot-05.png)](images/screenshot-05.png)
 Adds custom settings:
-[![WooCommerce settings page](screenshot-06.png)](screenshot-06.png)
+[![WooCommerce settings page](images/screenshot-06.png)](images/screenshot-06.png)
 
 [1]:https://wordpress.org/
 [2]:https://woocommerce.net/
+[3]:https://github.com/ondrejd/small-woocommerce-plugins/releases

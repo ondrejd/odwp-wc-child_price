@@ -10,6 +10,7 @@ Here is a table with all included plugins:
 | __Custom User Fields 1__ - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-1)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
 | __Custom User Fields 2__ - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-2)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
 | __Trip Duration__ - adds possibility to define trip duration using new custom fields for _WC_ products ([screenshots](#trip-duration)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
+| __Product Properties Filter Widget__ - ... | 0.1.0 | 4.7 | 4.9 | 3.1.2 | 3.1.2 |
 
 __Note:__ __WP_min___ is [WordPress][1] minimal version on which was plugin tested on, __WP_max___ accordingly maximal tested version; __WC_min___, __WC_max___ stands for maximal/minimal tested version of [WooCommerce][2] plugin.
 
@@ -43,6 +44,9 @@ Adds custom fields into product's edit page:
 [![Edit product page](images/screenshot-05.png)](images/screenshot-05.png)
 Adds custom settings:
 [![WooCommerce settings page](images/screenshot-06.png)](images/screenshot-06.png)
+
+### Product Properties Filter Widget
+...
 
 [1]:https://wordpress.org/
 [2]:https://woocommerce.net/

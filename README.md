@@ -4,7 +4,7 @@ This repository contains some small [WordPress][1]+[WooCommerce][2] plugins of m
 ## Included plugins
 Here is a table with all included plugins:
 
-| Plugin | Version | WP_min_ | WP_max_ | WC_min_ | WC_min_ |
+| Plugin | Version | WP min | WP max | WC min | WC min |
 |--------|---------|--------:|--------:|--------:|--------:|
 | __Child Price__ - adds new child price for _WC_ products  ([screenshots](#child-price-plugin)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
 | __Custom User Fields 1__ - adds new set of custom fields for _WC_ products ([screenshot](#custom-user-fields-1)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
@@ -12,7 +12,7 @@ Here is a table with all included plugins:
 | __Trip Duration__ - adds possibility to define trip duration using new custom fields for _WC_ products ([screenshots](#trip-duration)) | 1.0.0 | 4.7 | 4.8.2 | 3.1.2 | 3.1.2 |
 | __Product Properties Filter Widget__ - ... | 0.1.0 | 4.7 | 4.9 | 3.1.2 | 3.1.2 |
 
-__Note:__ __WP_min___ is [WordPress][1] minimal version on which was plugin tested on, __WP_max___ accordingly maximal tested version; __WC_min___, __WC_max___ stands for maximal/minimal tested version of [WooCommerce][2] plugin.
+__Note:__ __WP min__ is [WordPress][1] minimal version on which was plugin tested on, __WP max__ accordingly maximal tested version; __WC min__, __WC max__ stands for maximal/minimal tested version of [WooCommerce][2] plugin.
 
 ## For users/developers
 Here are some notes for users/developers:
@@ -46,7 +46,8 @@ Adds custom settings:
 [![WooCommerce settings page](images/screenshot-06.png)](images/screenshot-06.png)
 
 ### Product Properties Filter Widget
-...
+Selecting widget with filter on e-shop page:
+[![Selecting widget](images/screenshot-07.png)](images/screenshot-06.png)
 
 [1]:https://wordpress.org/
 [2]:https://woocommerce.net/

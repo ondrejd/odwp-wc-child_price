@@ -92,6 +92,7 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
 
 			$attr_taxonomies = $this->get_attr_taxonomies( $attr_taxonomies );
 
+			echo '<form method="get" onsubmit="__return false">';
             echo '<ul id="odwpwcpp-product-sorting" class="odwpwcpp-product-sorting">';
 			foreach ( $attr_taxonomies as $taxonomy ) {
 				$terms = get_terms( [ 'taxonomy' => 'pa_' . $taxonomy->attribute_name, 'hide_empty' => false ] );
@@ -119,7 +120,7 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
                     echo '<li class="odwpwcpp-product-sorting-sub-item">' .
                              '<label for="' . $input_id . '">' .
                                 '<input class="nm-product-sorting-checkbox" id="' . $input_id . '" name="' . $input_name . '" type="checkbox">' .
-                                '<span style="">' . $term->name . '</span>' .
+                                '<span>' . $term->name . '</span>' .
                              '</label>' .
                          '</li>';
                 }
@@ -129,6 +130,12 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
 			}
 
 			echo '</ul>';
+			echo '<div class="row odwpwcpp-submit_row">' .
+                    '<input type="submit" value="' . __( 'Filtrovat', 'odwpwcpp' ) . '" name="odwpwcpp-submit" disabled="disabled">' .
+                    '<input type="reset" value="' . __( 'Zrušit', 'odwpwcpp' ) . '" name="odwpwcpp-reset" disabled="disabled">' .
+                 '</div>';
+			echo '</form>';
+
 			echo $args['after_widget'];
 		}
 
@@ -196,6 +203,8 @@ add_action( 'wp_head', function() {
 .odwpwcpp-product-sorting-item.open .odwpwcpp-product-sorting-sub { display: block; }
 .odwpwcpp-product-sorting-sub-item label input[type="checkbox"] { position: relative; top: 2px; }
 .odwpwcpp-product-sorting-sub-item label span { display: inline-block; padding-left: 4px; }
+.odwpwcpp-submit_row input[type="submit"] { margin-top: 10px; }
+.odwpwcpp-submit_row input[name="odwpwcpp-reset"] { background-color: transparent; border-radius: 0 none; border: 0 none; }
 /* Hide "Out of stock" message */
 .products li.outofstock .nm-shop-loop-thumbnail > a::after { content: "" ! important; }
 </style>
@@ -211,12 +220,17 @@ add_action( 'wp_footer', function() {
 ?>
 <script type="text/javascript">
 jQuery( document ).ready( function( $ ) {
-    console.log( "odwpwcpp-wp_footer_hook" );
+
     $( ".odwpwcpp-product-sorting-item > span" ).click( function( e ) {
         $( this ).next().slideToggle( function() {
             $( this ).parent().toggleClass( "open" );
         } );
     } );
+
+    $( ".odwpwcpp-product-sorting-item input:checkbox" ).change( function( e ) {
+        $( ".odwpwcpp-submit_row input" ).prop( "disabled", false );
+    } );
+
 } );
 </script>
 <?php

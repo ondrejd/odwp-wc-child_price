@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Filtr dle atributů produktů pro ja-eshop.cz
  * Plugin URI: https://github.com/ondrejd/simple-woocommerce-plugins
- * Description: Přidává widget s filtrem dle atributů <strong>WooCommerce</strong> produktů na stránku obchodu. Plugin je dělán na míru e-shopu <a href="http://ja-eshop.cz/obchod" target="_blank">ja-eshop.cz</a> a <strong>WooCommerce</strong> verze <strong>3.2</strong> a vyšší.
+ * Description: Přidává standartní <em>WP</em> widget s filtrem dle atributů produktů pro stránku obchodu. Plugin je dělán na míru e-shopu <a href="http://ja-eshop.cz/obchod" target="_blank">ja-eshop.cz</a> a <strong>WooCommerce</strong> verze <strong>3.2</strong> a vyšší a na jiných e-shopech či konfiguracích nemusí fungovat správně. Widget můžete přidat v administraci - stránka <code>Vzhled &gt; Widgety</code> kde do sekce <strong>Obchod</strong> přidejte widget <strong>Filtr dle atributů</strong>.
  * Version: 0.2.0
  * Author: Ondřej Doněk
  * Author URI: https://ondrejd.com/
@@ -20,6 +20,7 @@
  * @since 0.1.0
  *
  * @link https://codex.wordpress.org/Widgets_API for documentation on WordPress Widgets API.
+ * @link https://developer.wordpress.org/reference/classes/wp_query/#taxonomy-parameters for documentation on {@see WP_Query} and filtering by taxonomy parameters.
  *
  * @todo Initialize localization!
  */
@@ -36,6 +37,11 @@ if ( ! class_exists( 'ODWP_WC_Product_Attributes_Filter_Widget' ) ) :
 	 * @since 0.1.0
 	 */
 	class ODWP_WC_Product_Attributes_Filter_Widget extends WP_Widget {
+	    /**
+	     * @const string
+	     */
+	    const SLUG = 'odwp-wc-product_attributes_filter_widget';
+
 		/**
 		 * @var array
 		 */
@@ -48,21 +54,37 @@ if ( ! class_exists( 'ODWP_WC_Product_Attributes_Filter_Widget' ) ) :
 		 */
 		public function __construct() {
 			$widget_opts = [
-				'classname'   => 'odwp-wc-product_attributes_filter_widget',
-				'description' => esc_html__( 'Filtr dle dodatečných vlastností produktů.', 'odwpwcpaf' ),
-				'title'       => esc_html__( 'Vlastnosti produktů', 'odwpwcpaf' ),
+				'classname'   => self::SLUG,
+				'description' => $this->get_description(),
+				'title'       => $this->get_title(),
 			];
 
 			parent::__construct(
-				'odwp-wc-product_attributes_filter_widget',
+				self::SLUG,
 				$widget_opts['title'],
 				$widget_opts
 			);
 		}
 
+        /**
+         * @return string Returns localized and escaped title of the widget.
+         * @since 0.2.0
+         */
+	    protected function get_title() {
+	        return esc_html__( 'Filtr dle atributů', 'odwpwcpaf' );
+        }
+
+        /**
+         * @return string Returns localized and escaped description of the widget.
+         * @since 0.2.0
+         */
+        protected function get_description() {
+            return esc_html__( 'Filtr dle dodatečných atributů produktů.', 'odwpwcpaf' );
+        }
+
 		/**
 		 * @global WPDB $wpdb
-         * @return array
+         * @return array Returns taxonomies (product attributes).
          * $since 0.1.0
 		 */
 		protected function get_attr_taxonomies() {
@@ -82,11 +104,10 @@ if ( ! class_exists( 'ODWP_WC_Product_Attributes_Filter_Widget' ) ) :
         }
 
 		/**
-         * @internal Returns URL of the filter's form.
          * @global WP $wp
-		 * @return string
+		 * @return string Returns URL of the filter's form.
 		 */
-		private function get_form_url() {
+		protected function get_form_url() {
 			global $wp;
 			return add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
 		}
@@ -221,7 +242,7 @@ if ( ! class_exists( 'ODWP_WC_Product_Attributes_Filter_Widget' ) ) :
 		 * @since 0.1.0
 		 */
 		public function form( $instance ) {
-			$title = ! empty( $instance['title'] ) ? $instance['title'] : esc_html__( 'Vlastnosti produktů', 'odwpwcpaf' );
+			$title = ! empty( $instance['title'] ) ? $instance['title'] : $this->get_title();
 ?>
 			<p>
 				<label for="<?=esc_attr( $this->get_field_id( 'title' ) )?>">
@@ -324,24 +345,34 @@ add_action( 'woocommerce_product_query',
      * @param WP_Query $q
      * @since 0.1.0
      */
-    function( $q ) {
+    function( WP_Query $q ) {
         $filter = ODWP_WC_Product_Attributes_Filter_Widget::get_filter();
         if ( count( $filter ) < 1 ) {
             return;
         }
 
-        $meta_query = $q->get( 'meta_query' );
+        $tax_query = [];
+
+        if ( count( $filter ) > 1 ) {
+            $tax_query['relation'] = 'AND';
+        }
+
+        //echo '<!-- [woocommerce_product_query]::filter' . PHP_EOL . print_r( $filter, true ) . ' -->' . PHP_EOL;
+
         foreach ( $filter as $taxonomy => $terms ) {
-	        $meta_query[] = [
-	            'key'     => $taxonomy,
-	            'value'   => $terms,
-	            'compare' => 'IN'
+	        $tax_query[] = [
+	            'taxonomy'         => $taxonomy,
+	            'terms'            => array_keys( $terms ),
+	            'field'            => 'term_taxonomy_id',//name,slug,term_id,term_taxonomy_id
+	            'operator'         => 'IN',
+	            'include_children' => false,
 	        ];
         }
 
-        echo '<!-- ' . print_r( $meta_query, true ) . ' -->';
+        //echo '<!-- [woocommerce_product_query]::tax_query' . PHP_EOL . print_r( $tax_query, true ) . ' -->' . PHP_EOL;
 
-        $q->set( 'meta_query', $meta_query );
+        $q->set( 'tax_query', $tax_query );
+
     }, 99, 1
 );
 

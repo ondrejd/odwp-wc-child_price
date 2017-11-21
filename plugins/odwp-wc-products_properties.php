@@ -34,6 +34,11 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
 	 */
 	class ODWP_WC_Products_Properties_Filter_Widget extends WP_Widget {
 		/**
+		 * @var array
+		 */
+	    private static $filter;
+
+		/**
 		 * Constructor - sets up the widget
 		 * @see WP_Plugin::__construct()
 		 * @since 0.1.0
@@ -74,6 +79,33 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
         }
 
 		/**
+         * @internal Returns URL of the filter's form.
+         * @global WP $wp
+		 * @return string
+		 */
+		private function get_form_url() {
+			global $wp;
+			return add_query_arg( $_SERVER['QUERY_STRING'], '', home_url( $wp->request ) );
+		}
+
+		/**
+		 * @return array Returns currently used filter (parsed from GET).
+		 */
+		public static function get_filter() {
+		    if ( is_array( self::$filter ) ) {
+		        return self::$filter;
+            }
+
+			self::$filter = filter_input( INPUT_GET, 'odwpwcpp', FILTER_DEFAULT , FILTER_REQUIRE_ARRAY );
+
+		    if ( ! is_array( self::$filter ) ) {
+			    self::$filter = [];
+			}
+
+			return self::$filter;
+        }
+
+		/**
 		 * Outputs the content of the widget
 		 * @param array $args
 		 * @param array $instance The widget options
@@ -92,10 +124,13 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
 
 			$attr_taxonomies = $this->get_attr_taxonomies( $attr_taxonomies );
 
-			echo '<form method="get" onsubmit="__return false">';
+            echo '<div class="odwpwcpp-product-sorting-form-cont">';
+			echo '<form action="' . $this->get_form_url() . '" method="get" name="odwpwcpp-product-sorting-form">';
             echo '<ul id="odwpwcpp-product-sorting" class="odwpwcpp-product-sorting">';
+
 			foreach ( $attr_taxonomies as $taxonomy ) {
-				$terms = get_terms( [ 'taxonomy' => 'pa_' . $taxonomy->attribute_name, 'hide_empty' => false ] );
+				$taxonomy_name = 'pa_' . $taxonomy->attribute_name;
+				$terms = get_terms( [ 'taxonomy' => $taxonomy_name, 'hide_empty' => false ] );
 
 				if ( ! is_array( $terms ) ) {
 					continue;
@@ -105,38 +140,75 @@ if ( ! class_exists( 'ODWP_WC_Products_Properties_Filter_Widget' ) ) :
 					continue;
 				}
 
-				echo '<li class="odwpwcpp-product-sorting-item">' .
-                        '<span>' . esc_html__( $taxonomy->attribute_label ) . '</span>' .
-                        '<ul class="odwpwcpp-product-sorting-sub">';
-
-				foreach ( $terms as $term ) {
-				    if ( ! ( $term instanceof WP_Term ) ) {
-				        continue;
-                    }
-
-                    $input_id = 'odwpwcpp-' . $taxonomy->attribute_name . '-' . $term->term_id;
-				    $input_name = 'odwpwcpp[pa_' . $taxonomy->attribute_name . '][' . $term->term_id . ']';
-
-                    echo '<li class="odwpwcpp-product-sorting-sub-item">' .
-                             '<label for="' . $input_id . '">' .
-                                '<input class="nm-product-sorting-checkbox" id="' . $input_id . '" name="' . $input_name . '" type="checkbox">' .
-                                '<span>' . $term->name . '</span>' .
-                             '</label>' .
-                         '</li>';
-                }
-
-				echo    '</ul>' .
-                    '</li>';
+			    $this->widget_print_item( $taxonomy, $terms );
 			}
 
 			echo '</ul>';
+
+			$filter = self::get_filter();
+			$disabled = ( count( $filter ) == 0 ) ? ' disabled="disabled"' : '';
+
 			echo '<div class="row odwpwcpp-submit_row">' .
-                    '<input type="submit" value="' . __( 'Filtrovat', 'odwpwcpp' ) . '" name="odwpwcpp-submit" disabled="disabled">' .
-                    '<input type="reset" value="' . __( 'Zrušit', 'odwpwcpp' ) . '" name="odwpwcpp-reset" disabled="disabled">' .
+                    '<input type="submit" value="' . __( 'Filtrovat', 'odwpwcpp' ) . '" name="odwpwcpp-submit"' . $disabled . '>' .
+                    '<input type="reset" value="' . __( 'Zrušit', 'odwpwcpp' ) . '" name="odwpwcpp-reset"' . $disabled . '>' .
                  '</div>';
 			echo '</form>';
+			echo '</div>';
 
 			echo $args['after_widget'];
+		}
+
+		/**
+         * @internal Prints single taxonomy filter.
+		 * @param Object $taxonomy
+		 */
+		private function widget_print_item( $taxonomy, $terms ) {
+			$taxonomy_name = 'pa_' . $taxonomy->attribute_name;
+			$filter = self::get_filter();
+
+			$classes = 'odwpwcpp-product-sorting-item';
+			if ( array_key_exists( $taxonomy_name, $filter ) ) {
+				$classes .= ' open';
+			}
+
+			echo '<li class="' . $classes . '">' .
+			     '<span>' . esc_html__( $taxonomy->attribute_label ) . '</span>' .
+			     '<ul class="odwpwcpp-product-sorting-sub">';
+
+			foreach ( $terms as $term ) {
+				$this->widget_print_subitem( $taxonomy, $term );
+			}
+
+			echo    '</ul>' .
+                '</li>';
+        }
+
+		/**
+         * @internal Prints single term of given taxonomy for the filter.
+		 * @param Object $taxonomy
+		 * @param WP_Term $term
+		 */
+		private function widget_print_subitem( $taxonomy, $term ) {
+			if ( ! ( $term instanceof WP_Term ) ) {
+				continue;
+			}
+
+			$taxonomy_name = 'pa_' . $taxonomy->attribute_name;
+			$filter        = self::get_filter();
+			$input_id      = 'odwpwcpp-' . $taxonomy->attribute_name . '-' . $term->term_id;
+			$input_name    = 'odwpwcpp[' . $taxonomy_name . '][' . $term->term_id . ']';
+			$checked       = '';
+
+			if ( array_key_exists( $taxonomy_name, $filter ) ) {
+				$checked = array_key_exists( $term->term_id, $filter[$taxonomy_name] ) ? ' checked="checked"' : '';
+			}
+
+			echo '<li class="odwpwcpp-product-sorting-sub-item">' .
+			     '<label for="' . $input_id . '">' .
+			     '<input id="' . $input_id . '" name="' . $input_name . '" type="checkbox"' . $checked . '>' .
+			     '<span>' . $term->name . '</span>' .
+			     '</label>' .
+			     '</li>';
 		}
 
 		/**
@@ -231,10 +303,34 @@ jQuery( document ).ready( function( $ ) {
         $( ".odwpwcpp-submit_row input" ).prop( "disabled", false );
     } );
 
+
+
 } );
 </script>
 <?php
 } );
 
 
+/**
+ * Remove weight from list of a product's attributes (on product's detail page).
+ */
 add_filter( 'woocommerce_product_get_weight' , '__return_false' );
+
+
+/**
+ * Apply our product attributes filter on WooCommerce products query.
+ */
+add_action( 'woocommerce_product_query', function( WP_Query $q) {
+    $filter = ODWP_WC_Products_Properties_Filter_Widget::get_filter();
+    if ( count( $filter ) < 1 ) {
+        return;
+    }
+
+    $meta_query = $q->get( 'meta_query' );
+    foreach ( $filter as $taxonomy => $terms ) {
+        echo '<!-- ' . $taxonomy . ' -->';
+	    //...
+    }
+
+    $q->set( 'meta_query', $meta_query );
+} );
